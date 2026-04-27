@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    :root {
+      --skool-blue: #2929FF;
+      --skool-green: #009E5D;
+      --skool-gray: #f2f2f2;
+      --skool-text: #1a1a1a;
+      --skool-subtext: #717171;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      width: 320px;
+      padding: 20px;
+      margin: 0;
+      background: white;
+      color: var(--skool-text);
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .logo {
+      width: 24px;
+      height: 24px;
+      background: linear-gradient(135deg, var(--skool-blue), var(--skool-green));
+      border-radius: 6px;
+    }
+    h2 { margin: 0; font-size: 18px; font-weight: 700; letter-spacing: -0.5px; }
+    
+    .field-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--skool-subtext);
+      display: block;
+      margin-bottom: 6px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-bottom: 16px;
+      box-sizing: border-box;
+      transition: border-color 0.2s;
+    }
+    input:focus {
+      outline: none;
+      border-color: var(--skool-blue);
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: var(--skool-blue);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.2s, transform 0.1s;
+    }
+    button:hover {
+      background: #1a1aff;
+    }
+    button:active {
+      transform: scale(0.98);
+    }
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    #status {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      text-align: center;
+      font-weight: 500;
+      background: var(--skool-gray);
+      color: var(--skool-subtext);
+    }
+    .success { background: #e6f6ef !important; color: var(--skool-green) !important; }
+    .error { background: #fef2f2 !important; color: #ef4444 !important; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div style="display: flex; align-items: center; font-weight: 900; font-size: 24px; letter-spacing: -1.5px;">
+      <span style="color: #2929FF">s</span>
+      <span style="color: #D1432A">k</span>
+      <span style="color: #D9A75B">o</span>
+      <span style="color: #6DBBEE">o</span>
+      <span style="color: #C14B3A">l</span>
+    </div>
+  </div>
+  
+  <div style="margin-bottom: 12px;">
+    <label style="font-size: 11px; color: #94a3b8; display: block; margin-bottom: 4px;">Pages to Capture</label>
+    <input type="number" id="pageCount" value="1" min="1" max="50" 
+      style="width: 100%; padding: 8px; background: #1e293b; border: 1px border #334155; border-radius: 4px; color: white; margin-bottom: 8px;">
+  </div>
+
+  <button id="syncBtn">Start Harvesting</button>
+  <div id="status">Ready to harvest</div>
+  <script src="popup.js"></script>
+</body>
+</html>

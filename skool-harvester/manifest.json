@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "Skool Harvester",
+  "version": "1.0",
+  "description": "Extracts Skool page data and sends it to a local server.",
+  "permissions": ["activeTab", "scripting"],
+  "host_permissions": [
+    "https://www.skool.com/*",
+    "http://localhost:3000/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "128": "icon.ico"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "icon.ico"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.skool.com/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
