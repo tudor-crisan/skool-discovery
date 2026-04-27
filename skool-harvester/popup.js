@@ -3,15 +3,38 @@ document.getElementById('syncBtn').addEventListener('click', async () => {
   const syncBtn = document.getElementById('syncBtn');
   const pageCount = parseInt(document.getElementById('pageCount').value) || 1;
   
-  statusEl.textContent = 'Initializing Crawler...';
+  statusEl.textContent = 'Initializing Intelligence Crawler...';
+  statusEl.className = '';
   syncBtn.disabled = true;
 
   try {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     
     if (!tab.url.includes('skool.com')) {
-      throw new Error('Not on a Skool page');
+      throw new Error('Please open a Skool group first');
     }
+
+    // Listen for progress messages from the content script
+    const messageListener = (message) => {
+      if (message.type === 'CRAWL_PROGRESS') {
+        statusEl.textContent = `Capturing Intelligence: Page ${message.page} of ${message.total}...`;
+      }
+      if (message.type === 'CRAWL_COMPLETE') {
+        statusEl.textContent = 'Intelligence Updated! Check Dashboard.';
+        statusEl.style.background = '#dcfce7';
+        statusEl.style.color = '#166534';
+        syncBtn.disabled = false;
+        chrome.runtime.onMessage.removeListener(messageListener);
+      }
+      if (message.type === 'CRAWL_ERROR') {
+        statusEl.textContent = 'Error: ' + message.error;
+        statusEl.className = 'error';
+        syncBtn.disabled = false;
+        chrome.runtime.onMessage.removeListener(messageListener);
+      }
+    };
+
+    chrome.runtime.onMessage.addListener(messageListener);
 
     // Send crawl command
     chrome.tabs.sendMessage(tab.id, { 
@@ -19,15 +42,16 @@ document.getElementById('syncBtn').addEventListener('click', async () => {
       pages: pageCount 
     }, (response) => {
        if (chrome.runtime.lastError) {
-         statusEl.textContent = 'Error: Refresh the page first';
+         statusEl.textContent = 'Error: Refresh the Skool page first';
+         statusEl.className = 'error';
          syncBtn.disabled = false;
+         chrome.runtime.onMessage.removeListener(messageListener);
          return;
        }
-       statusEl.textContent = 'Crawl started! Check dashboard soon.';
     });
 
   } catch (error) {
-    statusEl.textContent = 'Error: ' + error.message;
+    statusEl.textContent = error.message;
     statusEl.className = 'error';
     syncBtn.disabled = false;
   }

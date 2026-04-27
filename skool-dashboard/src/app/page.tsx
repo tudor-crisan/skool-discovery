@@ -9,6 +9,7 @@ interface Harvest {
   timestamp: string;
   groupName: string;
   url: string;
+  category?: string;
 }
 
 export default function Home() {
@@ -17,32 +18,47 @@ export default function Home() {
   const [activeCategory, setActiveCategory] = useState('All Harvests');
   const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
+  const fetchHarvests = () => {
     fetch('/api/harvests')
       .then(res => res.json())
       .then(data => {
-        if (data && Array.isArray(data.harvests)) {
-          setHarvests(data.harvests);
-        } else if (Array.isArray(data)) {
-          setHarvests(data);
-        }
+        const list = Array.isArray(data) ? data : (data?.harvests || []);
+        setHarvests(list);
         setLoading(false);
       })
-      .catch(() => {
+      .catch(err => {
+        console.error('Fetch error:', err);
         setHarvests([]);
         setLoading(false);
       });
+  };
+
+  useEffect(() => {
+    fetchHarvests();
   }, []);
+
+  const handleDelete = async (e: React.MouseEvent, id: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (confirm('Are you sure you want to delete this niche capture?')) {
+      const res = await fetch(`/api/harvests/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        fetchHarvests();
+      }
+    }
+  };
 
   const filteredHarvests = harvests.filter(h => {
     // Filter by Search
     const matchesSearch = h.groupName.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           h.url.toLowerCase().includes(searchTerm.toLowerCase());
     
-    // Filter by Category
+    // Filter by Category (Niche)
     const matchesCategory = activeCategory === 'All Harvests' || (() => {
       const cat = activeCategory.split(' ')[1]?.toLowerCase();
-      return h.groupName.toLowerCase().includes(cat) || h.url.toLowerCase().includes(cat);
+      // Look in group name or URL for niche keywords if category is unknown
+      return (h.groupName.toLowerCase().includes(cat)) || 
+             (h.url.toLowerCase().includes(cat));
     })();
 
     return matchesSearch && matchesCategory;
@@ -92,9 +108,9 @@ export default function Home() {
           <button 
             key={cat} 
             onClick={() => setActiveCategory(cat)}
-            className={`px-6 py-2 rounded-full font-bold text-sm whitespace-nowrap transition-all border ${
+            className={`px-6 py-2 rounded-full font-black text-sm whitespace-nowrap transition-all border ${
               activeCategory === cat 
-              ? 'bg-[#1a1a1a] text-white border-[#1a1a1a] shadow-lg' 
+              ? 'bg-[#f7d37c] text-[#1a1a1a] border-[#f7d37c] shadow-lg shadow-yellow-500/20' 
               : 'bg-white border-[#e5e5e5] text-[#1a1a1a] hover:border-slate-400'
             }`}
           >
@@ -114,27 +130,36 @@ export default function Home() {
             <p className="text-slate-300 text-sm mt-1 font-medium">Use the extension to capture data for this category.</p>
           </div>
         ) : filteredHarvests.map((h, i) => (
-          <Link href={`/harvests/${h.id}`} key={h.id} className="group bg-white rounded-[24px] overflow-hidden border border-[#e5e5e5] hover:border-blue-600/20 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1">
-            <div className="relative h-56 bg-slate-100 overflow-hidden">
-               <div className="absolute top-4 left-4 z-10 bg-black/40 text-white text-[10px] font-black px-2.5 py-1 rounded-md backdrop-blur-md">#{i+1}</div>
-               <div className="w-full h-full bg-gradient-to-br from-blue-50 to-emerald-50 flex items-center justify-center text-blue-100/50">
-                 <svg className="w-20 h-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-               </div>
-            </div>
-            <div className="p-7">
-               <div className="flex items-center gap-4 mb-4">
-                 <div className="w-12 h-12 bg-[#2929FF] rounded-[12px] flex items-center justify-center text-white font-black text-xl shadow-lg shadow-blue-600/20">{h.groupName?.[0]}</div>
-                 <div>
-                   <h3 className="font-extrabold text-xl leading-tight group-hover:text-[#2929FF] transition-colors">{h.groupName}</h3>
-                   <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mt-1">{new Date(h.timestamp).toLocaleDateString()}</p>
-                 </div>
-               </div>
-               <p className="text-slate-500 text-[14px] line-clamp-2 leading-relaxed mb-8 font-medium italic">Intel harvest from {h.groupName}. Analyzed for authority levels and post engagement.</p>
-               <div className="flex items-center justify-between">
-                 <span className="text-[#2929FF] text-xs font-black uppercase tracking-tighter group-hover:gap-2 transition-all flex items-center gap-1">Analyze Intel <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg></span>
-               </div>
-            </div>
-          </Link>
+          <div key={h.id} className="relative group">
+            <Link href={`/harvests/${h.id}`} className="block bg-white rounded-[24px] overflow-hidden border border-[#e5e5e5] hover:border-[#f7d37c] hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1">
+              <div className="relative h-40 bg-slate-100 overflow-hidden">
+                <div className="absolute top-4 left-4 z-10 bg-black/40 text-white text-[10px] font-black px-2.5 py-1 rounded-md backdrop-blur-md">#{i+1}</div>
+                <div className="w-full h-full bg-gradient-to-br from-blue-50 to-emerald-50 flex items-center justify-center text-blue-100/50">
+                  <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                </div>
+              </div>
+              <div className="p-7">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-[#2929FF] rounded-[12px] flex items-center justify-center text-white font-black text-xl shadow-lg shadow-blue-600/20">{h.groupName?.[0]}</div>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="font-extrabold text-xl leading-tight group-hover:text-[#2929FF] transition-colors truncate">{h.groupName}</h3>
+                    <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mt-1">{new Date(h.timestamp).toLocaleDateString()}</p>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="bg-[#f7d37c] text-[#1a1a1a] px-4 py-2 rounded-xl text-xs font-black uppercase tracking-tighter group-hover:px-5 transition-all flex items-center gap-1">Analyze Intel <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg></span>
+                </div>
+              </div>
+            </Link>
+            {/* Delete Button */}
+            <button 
+              onClick={(e) => handleDelete(e, h.id)}
+              className="absolute top-4 right-4 z-20 bg-white/80 hover:bg-red-500 hover:text-white text-slate-400 p-2 rounded-full backdrop-blur-sm transition-all border border-[#e5e5e5] opacity-0 group-hover:opacity-100"
+              title="Delete Niche"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+            </button>
+          </div>
         ))}
       </div>
     </main>

@@ -57,6 +57,7 @@ async function syncToServer(payload) {
 async function crawlPages(count) {
   for (let i = 0; i < count; i++) {
     console.log(`Harvesting page ${i + 1} of ${count}...`);
+    chrome.runtime.sendMessage({ type: 'CRAWL_PROGRESS', page: i + 1, total: count });
     
     // 1. Scroll to bottom to trigger any lazy loads
     window.scrollTo(0, document.body.scrollHeight);
@@ -80,6 +81,7 @@ async function crawlPages(count) {
       }
     }
   }
+  chrome.runtime.sendMessage({ type: 'CRAWL_COMPLETE' });
   console.log('Crawl completed!');
 }
 
