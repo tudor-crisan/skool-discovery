@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   title: "Wholesale Systems - Scale Beyond the Grind",
   description: "Custom software and automation for high-volume real estate wholesalers.",
   icons: {
-    icon: "/favicon.svg",
+    icon: "/favicon.png",
   },
 };
 
