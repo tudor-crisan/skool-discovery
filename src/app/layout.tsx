@@ -13,6 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://tudorcrisan.dev"),
   title: "Wholesale Systems - Scale Beyond the Grind",
   description: "Custom software and automation for high-volume real estate wholesalers.",
   icons: {
