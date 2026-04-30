@@ -51,7 +51,7 @@ export default function PresentationPage() {
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <a 
-                href="https://wa.me/+40757754718"
+                href="https://calendly.com/t2060891/30min?month=2026-04"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-8 py-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-semibold transition-all flex items-center gap-2 group shadow-lg shadow-emerald-900/20"
@@ -210,7 +210,7 @@ export default function PresentationPage() {
           <h2 className="text-4xl md:text-5xl font-bold mb-8 italic tracking-tight">Ready to stop grinding and start <span className="text-emerald-400 font-bold not-italic">scaling?</span></h2>
           <p className="text-slate-400 text-lg mb-12">I only work with 2 new wholesale teams per month to ensure dedicated systems support.</p>
           <a 
-            href="https://wa.me/+40757754718"
+            href="https://calendly.com/t2060891/30min?month=2026-04"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-block px-10 py-5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl font-bold text-xl transition-all shadow-xl shadow-emerald-900/40 transform hover:-translate-y-1 active:scale-95"
@@ -225,7 +225,15 @@ export default function PresentationPage() {
 
       {/* Footer */}
       <footer className="py-12 px-6 border-t border-slate-900 text-center">
-        <p className="text-slate-600 text-sm">© 2026 Developed for the Wholesaling Community. Built with Next.js & Tailwind.</p>
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+          <p className="text-slate-600 text-sm">© 2026 Developed for the Wholesaling Community. Built with Next.js & Tailwind.</p>
+          <div className="flex gap-6">
+            <a href="mailto:tudor.crisan.webdev@gmail.com" className="text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-emerald-400 transition-colors">Email</a>
+            <a href="https://wa.me/40757754718" target="_blank" rel="noopener noreferrer" className="text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-emerald-400 transition-colors">WhatsApp</a>
+            <a href="https://www.linkedin.com/in/tudor-crisan-0b0ab5404/" target="_blank" rel="noopener noreferrer" className="text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-emerald-400 transition-colors">LinkedIn</a>
+            <a href="https://github.com/tudor-crisan" target="_blank" rel="noopener noreferrer" className="text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-emerald-400 transition-colors">GitHub</a>
+          </div>
+        </div>
       </footer>
     </div>
   );
